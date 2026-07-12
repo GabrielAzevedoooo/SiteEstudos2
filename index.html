@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estudo+ · Plataforma de estudos</title>
+  <meta name="description" content="Aprenda no seu ritmo: conteúdos explicativos e quizzes interativos por categoria." />
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Ícone da aba do navegador (emoji como favicon simples, sem precisar de arquivo de imagem) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📘</text></svg>" />
+</head>
+<body>
+
+  <!-- ======================================================================
+       TELA DE CARREGAMENTO
+       Fica visível por um instante ao abrir o site e depois desaparece.
+       ====================================================================== -->
+  <div id="loading-screen">
+    <div class="loading-mark" aria-hidden="true"></div>
+    <p class="loading-text">Preparando seus estudos…</p>
+  </div>
+
+  <!-- ======================================================================
+       CABEÇALHO
+       Presente em todas as telas: marca, trilha de navegação (breadcrumbs),
+       busca de assuntos e alternância de tema claro/escuro.
+       ====================================================================== -->
+  <header class="site-header">
+    <div class="site-header__inner">
+      <button class="brand" id="btn-go-home" aria-label="Ir para a página inicial">
+        <span class="brand__mark">◆</span> Estudo+
+      </button>
+
+      <nav class="breadcrumbs" id="breadcrumbs" aria-label="Caminho de navegação"></nav>
+
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Buscar um assunto…"
+          autocomplete="off"
+          aria-label="Buscar assunto"
+        />
+        <div class="search-results hidden" id="search-results"></div>
+      </div>
+
+      <button class="icon-btn" id="btn-theme-toggle" aria-label="Alternar modo claro/escuro" title="Alternar tema">
+        <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ====================================================================
+         VIEW 1 · HOME
+         Tela inicial com boas-vindas, estatísticas de progresso e a
+         grade de categorias disponíveis.
+         ==================================================================== -->
+    <section class="view is-active" id="view-home">
+      <div class="container">
+        <div class="hero">
+          <p class="hero__eyebrow">Aprenda no seu ritmo</p>
+          <h1>Estude um pouco todo dia e veja o seu progresso crescer.</h1>
+          <p>Escolha uma categoria, leia o conteúdo com calma e depois teste o que aprendeu em um quiz rápido com explicações para cada resposta.</p>
+
+          <div class="stats-row" id="home-stats" aria-label="Seu progresso geral">
+            <div class="stat">
+              <strong id="stat-categories">0</strong>
+              <span>Categorias</span>
+            </div>
+            <div class="stat">
+              <strong id="stat-subjects">0</strong>
+              <span>Assuntos</span>
+            </div>
+            <div class="stat">
+              <strong id="stat-completed">0</strong>
+              <span>Concluídos</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">
+          <h2>Categorias</h2>
+        </div>
+        <div class="category-grid" id="category-grid"></div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         VIEW 2 · CATEGORIA
+         Mostra os assuntos de uma categoria organizados como uma
+         "trilha de estudo" (caminho vertical com pontos alternados).
+         ==================================================================== -->
+    <section class="view" id="view-category">
+      <div class="container">
+        <button class="back-link" id="btn-back-to-home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+          Todas as categorias
+        </button>
+
+        <div class="category-header">
+          <h1 id="category-title"></h1>
+          <p id="category-description" style="color: var(--color-ink-soft); max-width: 60ch;"></p>
+        </div>
+
+        <div class="trail" id="trail"></div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         VIEW 3 · ÁREA DE ESTUDO
+         Conteúdo explicativo do assunto, antes das perguntas.
+         ==================================================================== -->
+    <section class="view" id="view-study">
+      <div class="container">
+        <button class="back-link" id="btn-back-to-category">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+          Voltar
+        </button>
+
+        <div class="study-header">
+          <p class="study-header__eyebrow" id="study-eyebrow"></p>
+          <h1 id="study-title"></h1>
+        </div>
+
+        <article class="study-content" id="study-content"></article>
+
+        <div class="study-actions">
+          <button class="btn btn-primary" id="btn-start-quiz">Iniciar quiz</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         VIEW 4 · QUIZ
+         Perguntas de múltipla escolha, uma por vez, com barra de
+         progresso e contador de acertos.
+         ==================================================================== -->
+    <section class="view" id="view-quiz">
+      <div class="container">
+        <div class="quiz-header">
+          <div class="quiz-header__top">
+            <h1 id="quiz-title"></h1>
+            <div class="score-pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+              <span id="quiz-score">0 acertos</span>
+            </div>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="quiz-progress-fill" style="width:0%"></div>
+          </div>
+          <p class="progress-caption" id="quiz-progress-caption">Pergunta 1 de 5</p>
+        </div>
+
+        <div class="quiz-body">
+          <div class="question-card" id="question-card"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         VIEW 5 · RESULTADO
+         Resumo final do quiz: acertos, erros, porcentagem e mensagem.
+         ==================================================================== -->
+    <section class="view" id="view-results">
+      <div class="container results">
+        <div class="results__ring">
+          <svg viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+            <circle class="ring-value" id="ring-value" cx="60" cy="60" r="52"></circle>
+          </svg>
+          <div class="results__percent" id="results-percent">0%</div>
+        </div>
+
+        <h1 id="results-title">Quiz concluído!</h1>
+
+        <div class="results__breakdown">
+          <div>
+            <strong id="results-correct" style="color: var(--color-success);">0</strong>
+            <span>Acertos</span>
+          </div>
+          <div>
+            <strong id="results-wrong" style="color: var(--color-error);">0</strong>
+            <span>Erros</span>
+          </div>
+        </div>
+
+        <p class="results__message" id="results-message"></p>
+
+        <div class="results__actions">
+          <button class="btn btn-secondary" id="btn-retry-quiz">Refazer quiz</button>
+          <button class="btn btn-primary" id="btn-results-continue">Ver outros assuntos</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Estudo+ · Plataforma de estudos feita com HTML, CSS e JavaScript puro.</p>
+    </div>
+  </footer>
+
+  <!-- Banco de perguntas e conteúdos -->
+  <script src="js/questions.js"></script>
+  <!-- Lógica do site -->
+  <script src="js/script.js"></script>
+</body>
+</html>
